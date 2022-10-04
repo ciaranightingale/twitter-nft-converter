@@ -1,0 +1,26 @@
+{
+  "name": "twitter-nft-converter",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "prod": "next export"
+  },
+  "dependencies": {
+    "@thirdweb-dev/react": "^3",
+    "@thirdweb-dev/sdk": "^3",
+    "ethers": "^5.6.8",
+    "next": "^12.1.6",
+    "next-auth": "^4.12.2",
+    "node": "^18.10.0",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.11.0",
+    "eslint-config-next": "^12.1.0"
+  }
+}
