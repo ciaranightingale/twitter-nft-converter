@@ -1,4 +1,9 @@
-import { useAddress, useContract, Web3Button } from "@thirdweb-dev/react";
+import {
+  useAddress,
+  useContract,
+  Web3Button,
+  ConnectWallet,
+} from "@thirdweb-dev/react";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import SignIn from "../components/SignIn";
@@ -87,46 +92,50 @@ export default function Home() {
       </p>
 
       <hr className={styles.divider} />
+      <div className={styles.main}>
+        <SignIn />
 
-      <SignIn />
+        {address && session ? (
+          isLoading ? (
+            <p>Checking...</p>
+          ) : data && data.thirdwebFollower ? (
+            <>
+              <h3>Hey {session?.user?.name} 👋</h3>
+              <h4>Thanks for following our Twitter page.</h4>
+              <p>Here is a reward for you!</p>
 
-      {address && session ? (
-        isLoading ? (
-          <p>Checking...</p>
-        ) : data && data.thirdwebFollower ? (
-          <div className={`${styles.main} ${styles.spacerTop}`}>
-            <h3>Hey {session?.user?.name} 👋</h3>
-            <h4>Thanks for following our Twitter page.</h4>
-            <p>Here is a reward for you!</p>
+              {/* NFT Preview */}
+              <div className={styles.nftPreview}>
+                <b>Your NFT:</b>
+                <img src={session?.user.image} />
+                <p>{session.user.name}&apos;s thirdweb Twitter Follower NFT</p>
+              </div>
+              <div className={styles.web3Button}>
+                <Web3Button
+                  contractAddress={contractAddress}
+                  colorMode="dark"
+                  accentColor="#F213A4"
+                  action={() => mintNft()}
+                >
+                  Claim NFT
+                </Web3Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <p>Looks like you are not following our Twitter page.</p>
+              <a
+                className={styles.mainButton}
+                href={`https://twitter.com/thirdweb_`}
+              >
+                Follow our Twitter Page
+              </a>
+            </>
+          )
+        ) : null}
 
-            {/* NFT Preview */}
-            <div className={styles.nftPreview}>
-              <b>Your NFT:</b>
-              <img src={session?.user.image} />
-              <p>{session.user.name}&apos;s thirdweb Twitter Follower NFT</p>
-            </div>
-
-            <Web3Button
-              contractAddress={contractAddress}
-              colorMode="dark"
-              accentColor="#F213A4"
-              action={() => mintNft()}
-            >
-              Claim NFT
-            </Web3Button>
-          </div>
-        ) : (
-          <div className={`${styles.main} ${styles.spacerTop}`}>
-            <p>Looks like you are not following our Twitter page.</p>
-            <a
-              className={styles.mainButton}
-              href={`https://twitter.com/thirdweb_`}
-            >
-              Follow our Twitter Page
-            </a>
-          </div>
-        )
-      ) : null}
+        <ConnectWallet accentColor="#f213a4" colorMode="dark" margin={"1rem"} />
+      </div>
     </div>
   );
 }

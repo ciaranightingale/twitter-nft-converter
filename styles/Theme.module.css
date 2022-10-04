@@ -144,6 +144,8 @@
   text-align: center;
   border-radius: 9999px;
   border-style: none;
+  padding: 1rem;
+  margin: 1rem;
 }
 
 .mainButton:hover {
@@ -460,6 +462,6 @@
   margin: 1rem;
 }
 
-.aTag {
+.web3Button {
   padding: 1rem;
 }
