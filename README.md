@@ -166,6 +166,8 @@ One final detail on the Twitter connection is that we have some custom logic to 
 
 Now when we call `useSession` or `getSession`, we have access to the `accessToken` & `id` of the user; which allows us to make further requests to the Twitter API.
 
+For more information on the Twitter API visit the [docs](https://developer.twitter.com/en/docs/twitter-api)
+
 ## Checking Accounts User is Following
 
 Before the user sees the mint button, we make a check to see if the user is following on Twitter, using Next.js API Routes.
