@@ -8,6 +8,7 @@ export default async function checkIsFollowing(req, res) {
   // Read the access token from the session
   const accessToken = session?.accessToken;
 
+  //Get the user's ID from the session
   // Make a request to the Twitter API to get the users followers
   const userId = session.user.id;
   const url = `https://api.twitter.com/2/users/${userId}/following`;

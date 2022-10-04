@@ -1,4 +1,4 @@
-import { useAddress, useDisconnect, useMetamask } from "@thirdweb-dev/react";
+import { useAddress } from "@thirdweb-dev/react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import React from "react";
 import styles from "../styles/Theme.module.css";
@@ -6,8 +6,6 @@ import styles from "../styles/Theme.module.css";
 export default function SignIn() {
   // Allow a user to connect to twitter if they already have a wallet connected
   const address = useAddress();
-  const connectWithMetamask = useMetamask();
-  const disconnectWallet = useDisconnect();
   const { data: session } = useSession();
 
   // Disconnect Twitter

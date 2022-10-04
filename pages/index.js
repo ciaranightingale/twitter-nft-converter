@@ -128,7 +128,7 @@ export default function Home() {
                 className={styles.mainButton}
                 href={`https://twitter.com/thirdweb_`}
               >
-                Follow our Twitter Page
+                Follow
               </a>
             </>
           )

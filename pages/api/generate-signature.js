@@ -6,10 +6,9 @@ export default async function generateNftSignature(req, res) {
   const { claimerAddress } = JSON.parse(req.body);
   const { data } = JSON.parse(req.body);
   const { session } = JSON.parse(req.body);
-  console.log("session", session);
+
   //Check if user is a thirdweb follower and return undefined or the server object
   const twitterFollower = data.twitterFollower;
-  console.log("twitterFollower", twitterFollower);
 
   // Return an error response if the user is not following the account
   // This prevents the signature from being generated if they are not a member
@@ -35,7 +34,7 @@ export default async function generateNftSignature(req, res) {
   const signedPayload = await nftCollection.erc721.signature.generate({
     to: claimerAddress,
     metadata: {
-      name: `${session.user.name} is a thirdweb Twitter Follower NFT`,
+      name: `${session.user.name}'s thirdweb Twitter Follower NFT`,
       image: `${session.user.image}`,
       description: `An NFT rewarded for being a thirdweb follower!`,
     },
