@@ -1,6 +1,6 @@
 import { unstable_getServerSession } from "next-auth/next";
 import { authOptions } from "./auth/[...nextauth]";
-import { twitterId } from "../../constants";
+import { twitterId } from "../../utils/constants";
 
 export default async function checkIsFollowing(req, res) {
   // Get the Next Auth session so we can use the accessToken as part of the Twitter API request
@@ -8,7 +8,7 @@ export default async function checkIsFollowing(req, res) {
   // Read the access token from the session
   const accessToken = session?.accessToken;
 
-  //Get the user's ID from the session
+  // Get the user's ID from the session
   // Make a request to the Twitter API to get the users followers
   const userId = session.user.id;
   const url = `https://api.twitter.com/2/users/${userId}/following`;
@@ -21,7 +21,7 @@ export default async function checkIsFollowing(req, res) {
   };
   const response = await fetch(url, options);
 
-  // You may get rate limitd here and receive an error.
+  // You may get rate limited here and receive an error.
 
   // Parse the response as JSON
   const data = await response.json();

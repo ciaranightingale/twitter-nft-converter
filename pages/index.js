@@ -8,7 +8,7 @@ import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import SignIn from "../components/SignIn";
 import styles from "../styles/Theme.module.css";
-import { contractAddress } from "../constants";
+import { contractAddress } from "../utils/constants";
 
 export default function Home() {
   // The currently connected wallet's address
@@ -19,10 +19,9 @@ export default function Home() {
   // Get the NFT Collection we deployed using thirdweb+
   const { contract: nftCollectionContract } = useContract(contractAddress);
 
-  // This is simply a client-side check to see if the user is following the twitter page in /api/check-is-in-server
-  // We ALSO check on the server-side before providing the signature to mint the NFT in /api/generate-signature
-  // This check is to show the user that they are eligible to mint the NFT on the UI.
-  //Can use swr with auto refresh enabled to update following status without user reload
+  // This is a server-side check to see if the user is following the twitter page in /api/check-is-following
+  // This check is to show the user that they are eligible to mint the NFT on the UI and used to generate the signature.
+  // Can use swr with auto refresh enabled to update following status without user reload
   const [data, setData] = useState(null);
   const [isLoading, setLoading] = useState(false);
   useEffect(() => {
@@ -51,8 +50,8 @@ export default function Home() {
       }),
     });
 
-    //   // If the user meets the criteria to have a signature generated, we can use the signature
-    //   // on the client side to mint the NFT from this client's wallet
+    // If the user meets the criteria to have a signature generated, we can use the signature
+    // on the client side to mint the NFT from this client's wallet
     if (signature.status === 200) {
       const json = await signature.json();
       const signedPayload = json.signedPayload;

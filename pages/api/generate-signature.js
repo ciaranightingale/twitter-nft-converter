@@ -1,13 +1,13 @@
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
-import { contractAddress } from "../../constants";
+import { contractAddress } from "../../utils/constants";
 
 export default async function generateNftSignature(req, res) {
-  // Grab the claimer address (currently connected address) out of the request body
+  // Get the claimer address (currently connected address) out of the request body
   const { claimerAddress } = JSON.parse(req.body);
   const { data } = JSON.parse(req.body);
   const { session } = JSON.parse(req.body);
 
-  //Check if user is a thirdweb follower and return undefined or the server object
+  // Check if user is a thirdweb follower and return undefined or the server object
   const twitterFollower = data.twitterFollower;
 
   // Return an error response if the user is not following the account

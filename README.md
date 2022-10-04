@@ -8,7 +8,7 @@ This example shows you how to:
 - Generate signatures to mint an NFT to the users wallet
 - Check if the user is a Twitter follower
 
-Checkout this example [here](https://thirdweb-twitter-follower-example)
+Checkout this example [here](https://twitter-nft-converter.vercel.app/)
 
 If you're interested in reading the basics of signature-based minting, we recommend starting with [this](https://github.com/thirdweb-example/signature-based-minting-next-ts) example repository
 
@@ -16,15 +16,11 @@ If you're interested in reading the basics of signature-based minting, we recomm
 
 - Create an NFT Collection contract via the thirdweb dashboard on the **Goerli** test network.
 
-- Create a project using this example by running:
+- Create a project using this example by forking the repo.
 
-```bash
-npx thirdweb create --template community-rewards
-```
+- Find and replace our demo NFT Collection address (`0x25859732c176861c28b6b454C66FFE5bb2672Eb9`) in this repository, inside the [utils/constants.js](utils/constants.js) file with your NFT Collection contract address from the dashboard.
 
-- Find and replace our demo NFT Collection address (`0x25859732c176861c28b6b454C66FFE5bb2672Eb9`) in this repository, inside the [constants.js](./constants.js) file with your NFT Collection contract address from the dashboard.
-
-- We use the thirdweb Twitter profile ID `1382854043433783296`. Find and replace this ID with your own Twitter profile ID inside the [constants.js](./constants.js) file. You can learn how to get your Twitter from [this guide](https://www.wikihow.com/Find-Your-User-ID-on-Twitter).
+- We use the thirdweb Twitter profile ID `1382854043433783296`. Find and replace this ID with your own Twitter profile ID inside the [utils/constants.js](utils/constants.js) file. You can learn how to get your Twitter from [this guide](https://www.wikihow.com/Find-Your-User-ID-on-Twitter).
 
 ```bash
 npm install
@@ -65,7 +61,7 @@ We have built a component that handles the sign in logic for Twitter in [/compon
 ```jsx
 import const ConnectWallet from "@thirdweb-dev/react";
 
-//Use this component anywhere within your app
+// Use this component anywhere within your app
 <ConnectWallet accentColor="#f213a4" colorMode="dark" margin={"1rem"} />
 ```
 
@@ -107,11 +103,11 @@ We setup the Twitter Provider and pass in our Twitter applications information t
   ],
 ```
 
-As you can see, we are also requesting additional scopes on the user's profile called `follows.read users.read tweet.read`.
+As you can see, we are also requesting additional scopes on the user's profile: `follows.read users.read tweet.read`.
 
-This is so that we can later make another API request to access which accounts the user is following.
+This is so that we can later make another API request to access a list accounts the user is following.
 
-We are using version Oauth 2.0.
+We are using version OAuth 2.0.
 
 ### Setting Up Your Twitter Application
 
@@ -133,19 +129,19 @@ CLIENT_ID=<your-twitter-client-id-here>
 CLIENT_SECRET=<your-twitter-client-secret-here>
 ```
 
-In the `SignIn` component, we are importing functions from `next-auth/react` to sign in and out with Discord.
+In the `SignIn` component, we are importing functions from `next-auth/react` to sign in and out with Twitter.
 
 ```jsx
 import { useSession, signIn, signOut } from "next-auth/react";
 ```
 
-We then user is signed in, we can access their session information using the `useSession` hook:
+When user is signed in, we can access their session information using the `useSession` hook:
 
 ```jsx
 const { data: session } = useSession();
 ```
 
-One final detail on the Twitter connection is that we have some custom logic to append the `accessToken` & `userID` to the `session`, so that we can use this to make further API requests. i.e. we need the user's access token & id to provide to the `Authorization Bearer` & request url respectively when we make the API request to see which servers this user is a part of.
+One final detail on the Twitter connection is that we have some custom logic to append the `accessToken` & `userID` to the `session`, so that we can use this to make further API requests. i.e. we need the user's access token & id to provide to the `Authorization Bearer` & request url respectively when we make the API request to see which accounts this user is following.
 
 ```jsx
 // Inside [...nextauth.js]
@@ -153,7 +149,7 @@ One final detail on the Twitter connection is that we have some custom logic to 
 // When the user signs in, get their token
   callbacks: {
     async jwt({ token, account, user }) {
-      //Add the user ID to the token user data
+      // Add the user ID to the token user data
       if (user) {
         token["user"] = {
           userId: user.id,
@@ -168,11 +164,11 @@ One final detail on the Twitter connection is that we have some custom logic to 
   }
 ```
 
-Now when we call `useSession` or `getSession`, we have access to the `accessToken` & `id` of the user; which allows us to make further requests to the Discord API.
+Now when we call `useSession` or `getSession`, we have access to the `accessToken` & `id` of the user; which allows us to make further requests to the Twitter API.
 
 ## Checking Accounts User is Following
 
-Before the user see's the mint button, we make a check to see if the user is following on Twitter, using Next.js API Routes.
+Before the user sees the mint button, we make a check to see if the user is following on Twitter, using Next.js API Routes.
 
 This logic is performed on the [pages/api/check-is-following.js](./pages/api/check-is-following.js) file.
 
@@ -186,8 +182,8 @@ const session = await unstable_getServerSession(req, res, authOptions);
 // Read the access token from the session
 const accessToken = session?.accessToken;
 
-//Get the user's ID from the session
-// Make a request to the Twitter API to get the users followers
+// Get the user's ID from the session
+// Make a request to the Twitter API to get the users following
 const userId = session.user.id;
 const url = `https://api.twitter.com/2/users/${userId}/following`;
 const token = `BEARER ${accessToken}`;
@@ -199,18 +195,18 @@ const options = {
 };
 const response = await fetch(url, options);
 
-// You may get rate limitd here and receive an error.
+// You may get rate limited here and receive an error.
 
 // Parse the response as JSON
 const data = await response.json();
 ```
 
-Now we have a list of the the user is following inside the `data` variable. We can filter the array of servers to find the one we are looking for:
+Now we have a list of the the user is following inside the `data` variable. We can filter the array of accounts to find the one we are looking for:
 
 ```jsx
 // Filter all the followers to find the one we want
 // Returns undefined if the user is not a follower
-// Returns the follower object if the user is a member
+// Returns the follower object if the user is a follower
 const thirdwebTwitterFollower = data?.data.find(
   (user) => user.id === twitterId
 );
@@ -224,16 +220,16 @@ res
 We then make a `fetch` request on the client to this API route on the [index.js](./pages/index.js) file:
 
 ```jsx
-// This is simply a client-side check to see if the user is a member of the discord in /api/check-is-in-server
-// We ALSO check on the server-side before providing the signature to mint the NFT in /api/generate-signature
-// This check is to show the user that they are eligible to mint the NFT on the UI.
+// This is a server-side check to see if the user is following the twitter page in /api/check-is-following
+// This check is to show the user that they are eligible to mint the NFT on the UI and used to generate the signature.
+// Can use swr with auto refresh enabled to update following status without user reload
 const [data, setData] = useState(null);
 const [isLoading, setLoading] = useState(false);
 useEffect(() => {
   if (session) {
     setLoading(true);
-    // Load the check to see if the user  and store it in state
-    fetch("api/check-is-followingr")
+    // Load the check to see if the user is following and store it in state
+    fetch("api/check-is-following")
       .then((res) => res.json())
       .then((d) => {
         setData(d);
@@ -243,7 +239,7 @@ useEffect(() => {
 }, [session]);
 ```
 
-We use this information on the client to show either a **mint** [Web3Button](https://portal.thirdweb.com/react/react.web3button), or a **Follow** button to the user:
+We use this information on the client to show either a **mint** [Web3Button](https://portal.thirdweb.com/react/react.web3button), or a **follow** button to the user:
 
 ```jsx
 data ? (
@@ -290,11 +286,11 @@ const signature = await fetch(`/api/generate-signature`, {
 });
 ```
 
-The API uses the check as described above, where we pass the twitterFollower (data.twitterFollower) and session variables to the body of the API call to ensure the user is a Twitter follower before generating a signature.
+The API uses the check as described above, where we pass the twitterFollower (`data.twitterFollower`) and session variables to the body of the API call to ensure the user is a Twitter follower before generating a signature.
 
 ```jsx
 // Return an error response if the user is not following the account
-// This prevents the signature from being generated if they are not a member
+// This prevents the signature from being generated if they are not a follower
 if (twitterFollower === "undefined") {
   res.status(403).send("User is not a follower.");
   return;
@@ -306,8 +302,8 @@ If the user is a follower, we can start the process of generating the signature 
 Firstly, we initialize the thirdweb SDK using our private key.
 
 ```jsx
-// Initialize the Thirdweb SDK on the serverside using the private key on the mumbai network
-const sdk = ThirdwebSDK.fromPrivateKey(process.env.PRIVATE_KEY, "mumbai");
+// Initialize the Thirdweb SDK on the serverside using the private key on the goerli network
+const sdk = ThirdwebSDK.fromPrivateKey(process.env.PRIVATE_KEY, "goerli");
 ```
 
 You'll need another entry in your `.env.local` file, containing your private key for this to work.
@@ -321,13 +317,13 @@ PRIVATE_KEY=<your-private-key-here>
 Next, we get our NFT collection contract:
 
 ```jsx
-// Load the NFT Collection via it's contract address using the SDK
+// Load the NFT Collection via its contract address using the SDK
 const nftCollection = sdk.getNFTCollection(contractAddress);
 ```
 
 And finally generate the signature for the NFT:
 
-We use the information of the user's Discord profile for the metadata of the NFT! How cool is that?
+We use the information of the user's Twitter profile for the metadata of the NFT! How cool is that?
 
 ```jsx
 // Generate the signature for the NFT mint transaction
@@ -368,10 +364,9 @@ Voilà! You have generated a signature for an NFT on the server-side, and used t
 
 ## Going to production
 
-In a production environment, you need to have an environment variable called `NEXTAUTH_SECRET` for the Twitter Oauth to work.
+In a production environment, you need to have an environment variable called `NEXTAUTH_SECRET` for the Twitter OAuth to work.
 
-You can learn more about it here:
-https://next-auth.js.org/configuration/options
+You can learn more about it [here](https://next-auth.js.org/configuration/options).
 
 You can quickly create a good value on the command line via this openssl command.
 
